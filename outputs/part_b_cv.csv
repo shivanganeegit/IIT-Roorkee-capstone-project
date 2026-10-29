@@ -1,0 +1,3 @@
+model,mean_r2,std_r2
+linear_regression,0.926133,0.004754
+gradient_boosting,0.935219,0.004415

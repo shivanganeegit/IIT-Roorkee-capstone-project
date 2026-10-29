@@ -1,6 +1,16 @@
 import pandas as pd
 import numpy as np
 
+PROMISED_HOURS = {"Express": 36, "Standard": 60, "Economy": 96}
+FEATURES = [
+    "promised_hours", "distance_km", "parcel_weight_kg", "log_declared_value", "n_stops",
+    "rain_flag", "sale_event_flag", "is_cod", "is_weekend", "dispatch_hour",
+    "hub_tier", "hub_daily_capacity",
+    "label_print_batch", "scanner_build_no", "tape_roll_no", "sticker_serial_mod", "shelf_slot_no",
+]
+NOISE_COLUMNS = ["label_print_batch", "scanner_build_no", "tape_roll_no", "sticker_serial_mod", "shelf_slot_no"]
+
+
 def clean_shipments(raw, medians=None):
     # 1. Drop exact duplicate rows
     df = raw.drop_duplicates()
@@ -44,9 +54,22 @@ def clean_shipments(raw, medians=None):
 def build_features(clean, hubs) :
     # 1. Left merge with hubs on hub_id
     df = clean.merge(hubs, on="hub_id", how="left")
-
+    df["service_type"] = (
+    df["service_type"]
+    .astype("string")
+    .str.strip()
+    .str.title()
+)
     # 2. promised_hours (integer from PROMISED_HOURS)
-    df["promised_hours"] = df["PROMISED_HOURS"].astype(int)
+    df["promised_hours"] = df["service_type"].map(PROMISED_HOURS)
+    if df["promised_hours"].isna().any():
+        unknown = df.loc[
+            df["promised_hours"].isna(),
+            "service_type",
+        ].unique()
+        raise ValueError(f"Unknown service types: {unknown}")
+
+    df["promised_hours"] = df["promised_hours"].astype(int)
 
     # 3. is_cod (1 if payment_mode == "COD", else 0; Unknown gives 0)
     df["is_cod"] = (df["payment_mode"] == "COD").astype(int)
