@@ -1,3 +1,10 @@
+# Delhivery Last-Mile Delay Intelligence Pipeline
+
+Capstone project, Artificial Intelligence and Machine Learning Certification Program, E&ICT Academy, IIT Roorkee.
+Everything runs offline on free libraries (pandas, NumPy, scikit-learn, joblib). The data is synthetic, produced by `generate_data.py`; Delhivery's real records are not used. Money is in Indian Rupees (INR).
+
+The repository answers three questions in one connected pipeline: how long will a parcel take (Part B), which parcels will miss their promise (Part C), and which hubs need which playbook (Part D). Part A prepares the data for all of them. The cleaning and feature functions live once in `src/shipment_prep.py` and are reused by Part A and by the scoring script.
+
 # How to run
 
 This capstone builds a reproducible synthetic last-mile shipment pipeline: it cleans shipment records, explores delay patterns, evaluates delivery-time and late-delivery models, profiles hubs into operating segments, packages a classifier, and generates actions for new shipments.
